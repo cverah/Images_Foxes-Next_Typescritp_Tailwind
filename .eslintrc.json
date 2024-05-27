@@ -1,0 +1,8 @@
+{
+  "extends": "next/core-web-vitals",
+  //ESTO QUITAR SOLO ES PARA ESTE PROYECTO PARA APRENDER TYPESCRIPT
+  "rules": {
+    "@next/next/no-img-element": "off",
+    "jsx-a11y/alt-text": "off"
+  }
+}
