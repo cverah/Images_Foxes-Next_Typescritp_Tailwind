@@ -1,14 +1,24 @@
-import { useEffect, useRef, useState } from "react";
+import { ImgHTMLAttributes, useEffect, useRef, useState } from "react";
 
-//definir aquí los prop
-type Props = {
-  imgFox: string;
-  //aquí puede ir mas objeto de children con su respectiva valor explicito
+//para los props de la Imagen en si
+type LazyImageProps = {
+  src: string;
+  //explicito cuando es una función el prop
+  onClick: () => void;
 };
+
+//para las funciones y propiedades de imagen
+type ImageNative = ImgHTMLAttributes<HTMLImageElement>;
+
+//unimos las dos propiedades explicitas en Props
+type Props = LazyImageProps & ImageNative;
 
 //función explicita que devuelve un JSX (devuelve un html)
 //los children de tipo Props
-const Fox = ({ imgFox }: Props): JSX.Element => {
+//...imgProps esto quiere decir que todo lo demás guárdalo en este valor ...imgProps
+const LazyImage = ({ src, ...imgProps }: Props): JSX.Element => {
+  // console.log({ ...imgProps }); --> {alt: 'imagen ys4ndslqr_1717031493245', onClick: ƒ}
+
   //ref para referenciar un valor en react
   const node = useRef<HTMLImageElement>(null);
   //inicializar con cuadro transparente
@@ -25,7 +35,7 @@ const Fox = ({ imgFox }: Props): JSX.Element => {
       entries.forEach((entry): void => {
         //on intersection cuando la imagen es visible
         if (entry.isIntersecting) {
-          setSrcImage(imgFox);
+          setSrcImage(src);
         }
       });
     });
@@ -40,7 +50,7 @@ const Fox = ({ imgFox }: Props): JSX.Element => {
     return (): void => {
       observe.disconnect();
     };
-  }, [imgFox]);
+  }, [src]);
 
   return (
     <img
@@ -49,8 +59,9 @@ const Fox = ({ imgFox }: Props): JSX.Element => {
       className="rounded-lg mx-auto w-[320px] h-auto border border-black bg-slate-500"
       //inicializar la imagen con el cuadro gris
       src={srcImage}
+      {...imgProps}
     />
   );
 };
 
-export default Fox;
+export default LazyImage;

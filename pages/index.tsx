@@ -1,5 +1,5 @@
 import Head from "next/head";
-import Fox from "./Fox";
+import LazyImage from "./Fox";
 import { MouseEventHandler, useState } from "react";
 
 // function random para generar img aleatorio
@@ -51,7 +51,12 @@ export default function Home() {
         </div>
         {images.map(({ id, url }) => (
           <div key={id} className="p-2">
-            <Fox imgFox={url} />
+            <LazyImage
+              src={url}
+              onClick={() => console.log("se hizo click en la image")}
+              alt={`imagen ${id}`}
+              title="Imagen de zorros"
+            />
           </div>
         ))}
       </main>
