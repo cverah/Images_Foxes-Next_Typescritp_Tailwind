@@ -10,19 +10,13 @@ const numberRandom = (): number => Math.floor(Math.random() * 123) + 1;
 const generateId = (): string =>
   Math.random().toString(36).substr(2, 9) + "_" + Date.now();
 
-//explicito objeto
-type Images = {
-  id: string;
-  url: string;
-};
-
 export default function Home() {
-  const [images, setImages] = useState<Array<Images>>([]);
+  const [images, setImages] = useState<Array<IFoxImages>>([]);
 
   const addImage: MouseEventHandler<HTMLButtonElement> = (event) => {
     event.preventDefault();
     const target = event.target;
-    const newImage: Images = {
+    const newImage: IFoxImages = {
       id: generateId(),
       url: `https://randomfox.ca/images/${numberRandom()}.jpg`,
     };
@@ -53,7 +47,7 @@ export default function Home() {
           <div key={id} className="p-2">
             <LazyImage
               src={url}
-              onLazyLoad={(img) =>
+              onLazyLoad={(img: HTMLImageElement) =>
                 console.log(
                   `la imagen ${index + 1} se ha cargado, valor de la imagen: `,
                   img
