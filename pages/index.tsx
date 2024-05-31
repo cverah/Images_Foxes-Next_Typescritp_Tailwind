@@ -49,10 +49,16 @@ export default function Home() {
             Agregar Imagen
           </button>
         </div>
-        {images.map(({ id, url }) => (
+        {images.map(({ id, url }, index) => (
           <div key={id} className="p-2">
             <LazyImage
               src={url}
+              onLazyLoad={(img) =>
+                console.log(
+                  `la imagen ${index + 1} se ha cargado, valor de la imagen: `,
+                  img
+                )
+              }
               onClick={() => console.log("se hizo click en la image")}
               alt={`imagen ${id}`}
               title="Imagen de zorros"

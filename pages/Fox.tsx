@@ -3,8 +3,11 @@ import { ImgHTMLAttributes, useEffect, useRef, useState } from "react";
 //para los props de la Imagen en si
 type LazyImageProps = {
   src: string;
-  //explicito cuando es una función el prop
-  onClick: () => void;
+  //explicito de una función en el prop
+  //el ? es opcional ose puede o no puede ir el prop
+  //el valor del parámetro sera una imagen por ello se asigna el explicito para una imagen el HTMLImageElement
+  //void retorna un vació
+  onLazyLoad?: (img: HTMLImageElement) => void;
 };
 
 //para las funciones y propiedades de imagen
@@ -13,10 +16,7 @@ type ImageNative = ImgHTMLAttributes<HTMLImageElement>;
 //unimos las dos propiedades explicitas en Props
 type Props = LazyImageProps & ImageNative;
 
-//función explicita que devuelve un JSX (devuelve un html)
-//los children de tipo Props
-//...imgProps esto quiere decir que todo lo demás guárdalo en este valor ...imgProps
-const LazyImage = ({ src, ...imgProps }: Props): JSX.Element => {
+const LazyImage = ({ src, onLazyLoad, ...imgProps }: Props): JSX.Element => {
   // console.log({ ...imgProps }); --> {alt: 'imagen ys4ndslqr_1717031493245', onClick: ƒ}
 
   //ref para referenciar un valor en react
@@ -26,16 +26,32 @@ const LazyImage = ({ src, ...imgProps }: Props): JSX.Element => {
     "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIwIiBoZWlnaHQ9IjMyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB2ZXJzaW9uPSIxLjEiLz4="
   );
 
+  const [isLazyLoaded, setIsLazyLoaded] = useState<boolean>(false);
+
   //agregamos observador
   useEffect(() => {
+    //si ya cargo la imagen retornar
+    if (isLazyLoaded) return;
     //iniciar observador
     //Intersection observer recibe unas entradas que es un array
     // tipo void significa que es una función que no devuelve nada
     const observe = new IntersectionObserver((entries): void => {
       entries.forEach((entry): void => {
-        //on intersection cuando la imagen es visible
-        if (entry.isIntersecting) {
-          setSrcImage(src);
+        // si la imagen no esta interceptado si la imagen ya existe
+        if (!entry.isIntersecting || !node.current) {
+          return;
+        }
+        //cargar la imagen
+        setSrcImage(src);
+        //desconectar observador
+        observe.disconnect();
+        //cambiar la carga de imagen a true
+        setIsLazyLoaded(true);
+
+        //validar la función onLazyLoad
+        if (typeof onLazyLoad === "function") {
+          //node.current es la imagen actual entonces lo mandamos a la función
+          onLazyLoad(node.current);
         }
       });
     });
@@ -50,7 +66,7 @@ const LazyImage = ({ src, ...imgProps }: Props): JSX.Element => {
     return (): void => {
       observe.disconnect();
     };
-  }, [src]);
+  }, [src, onLazyLoad, isLazyLoaded]);
 
   return (
     <img
