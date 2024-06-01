@@ -1,10 +1,13 @@
 import Head from "next/head";
 import LazyImage from "./Fox";
 import { MouseEventHandler, useState } from "react";
+import { random } from "lodash";
 
 // function random para generar img aleatorio
 //función explicita que devuelve un numero
-const numberRandom = (): number => Math.floor(Math.random() * 123) + 1;
+// const numberRandom = (): number => Math.floor(Math.random() * 123) + 1;
+//con lodash
+const numberRandom = () => random(1, 123);
 
 //función explicita de generar id único
 const generateId = (): string =>
